@@ -1,0 +1,19 @@
+site_name: 数据中心项目文档
+site_description:  数据中心项目相关文档说明
+site_author: MengQiu Wang
+
+theme:
+  name: readthedocs
+  highlightjs: true
+  hljs_languages:
+    - yaml
+    - django
+
+nav:
+    - '主页': index.md
+    - '安装使用': installation.md
+    - '关于': about.md
+    - '附录': reference.md
+
+extra_css:
+  - css/extra.css
