@@ -11,11 +11,11 @@
 ### 1.4 方案不足
 
 ## 二、环境准备
-**docker version - 18.09.7**
+docker version - 18.09.7
 
-**nvidia-docker version - 2.2.2**
+nvidia-docker version - 2.2.2
 
-**git** 
+git
 
 ### 2.1. 登录镜像管理帐号
 
@@ -44,7 +44,7 @@ docker build -t 'tencent_2020_ad_competition:latest' .
 git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 ```
 
-### 2.5. 下载数据集以及spark运行环境, 将数据集放于项目的data文件夹下
+### 2.5. 下载数据集以及spark运行组件, 将数据集放于项目的data文件夹下
 ``
 
 ### 2.6. 运行docker环境
