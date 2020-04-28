@@ -15,6 +15,8 @@
 
 **nvidia-docker version - 2.2.2**
 
+**git** 
+
 ### 2.1. 登录镜像管理帐号
 
 ```
