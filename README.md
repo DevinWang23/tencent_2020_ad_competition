@@ -12,6 +12,7 @@
 
 ## 二、环境准备
 **docker version - 18.09.7**
+
 **nvidia-docker version - 2.2.2**
 
 ### 2.1. 登录镜像管理帐号
@@ -83,5 +84,6 @@ registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-p
 运行 `python3 predict.py` 生成最终针对线上测试集的预测结果.
 
 ## 参考学习资料
-[1] 2019腾讯广告算法大赛初赛冠军github: <https://github.com/guoday/Tencent2019_Preliminary_Rank1st>
-[2] 2019腾讯广告算法大赛复赛冠军github: <https://github.com/bettenW/Tencent2019_Finals_Rank1st>
+[1] 2019腾讯广告算法大赛round1冠军github: <https://github.com/guoday/Tencent2019_Preliminary_Rank1st>
+
+[2] 2019腾讯广告算法大赛round2冠军github: <https://github.com/bettenW/Tencent2019_Finals_Rank1st>
