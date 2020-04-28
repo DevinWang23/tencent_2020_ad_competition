@@ -17,28 +17,37 @@ nvidia-docker version - 2.2.2
 
 ### 2.1. 登录镜像管理帐号
 
-```docker login \
+```
+docker login \
 --username=wmq王王 \  
-registry.cn-shenzhen.aliyuncs.com``` 
+registry.cn-shenzhen.aliyuncs.com
+``` 
 (密码:wang3436)
 
 ### 2.2. 拉取docker
 
-`docker pull registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5`
+```
+docker pull registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5
+```
 
 ### 2.3. cd到项目目录下, 通过Dockerfile构建docker
 
-`docker build -t 'tencent_2020_ad_competition:latest' .` 
+```
+docker build -t 'tencent_2020_ad_competition:latest' .
+``` 
 
 ### 2.4. clone代码
 
-`git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git`
+```
+git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
+```
 
 ### 2.5. 下载数据集以及spark运行环境, 将数据集放于项目的data文件夹下
 ``
 
 ### 2.6. 运行docker环境
-`nvidia-docker run -it \
+```
+nvidia-docker run -it \
 --rm \
 --name ad_competition \
 -p 4112:4112 \
@@ -48,7 +57,8 @@ registry.cn-shenzhen.aliyuncs.com```
 -v $DOWNLOAD_SPARK_ENV_PATH:/home/spark_env \
 -v $PROJECT_PATH:/home/Tecent_2020_Ad_Competition \
 registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5 \
-/bin/bash`
+/bin/bash
+```
 
 ## 三、代码运行说明
 
