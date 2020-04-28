@@ -11,9 +11,8 @@
 ### 1.4 方案不足
 
 ## 二、环境准备
-docker version - 18.09.7
-
-nvidia-docker version - 2.2.2
+**docker version - 18.09.7**
+**nvidia-docker version - 2.2.2**
 
 ### 2.1. 登录镜像管理帐号
 
@@ -47,7 +46,8 @@ git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 
 ### 2.6. 运行docker环境
 ```
-nvidia-docker run -it \
+nvidia-docker run \
+-it \
 --rm \
 --name ad_competition \
 -p 4112:4112 \
