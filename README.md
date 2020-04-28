@@ -12,6 +12,7 @@
 
 ## 二、环境准备
 docker version - 18.09.7
+
 nvidia-docker version - 2.2.2
 
 ### 2.1. 登录镜像管理帐号
@@ -36,9 +37,8 @@ registry.cn-shenzhen.aliyuncs.com`
 ### 2.5. 下载数据集以及spark运行环境, 将数据集放于项目的data文件夹下
 ``
 
-### 2.6. 运行docker环境`
-
-nvidia-docker run -it \
+### 2.6. 运行docker环境
+`nvidia-docker run -it \
 --rm \
 --name ad_competition \
 -p 4112:4112 \
