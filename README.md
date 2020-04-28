@@ -17,10 +17,8 @@ nvidia-docker version - 2.2.2
 
 ### 2.1. 登录镜像管理帐号
 
-`docker login \
-
---username=wmq王王 \
-
+`docker login \  
+--username=wmq王王 \  
 registry.cn-shenzhen.aliyuncs.com` 
 (密码:wang3436)
 
