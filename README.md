@@ -17,8 +17,8 @@ nvidia-docker version - 2.2.2
 
 ### 2.1. 登录镜像管理帐号
 
-`docker login \
---username=wmq王王 \
+`docker login \  
+--username=wmq王王 \  
 registry.cn-shenzhen.aliyuncs.com` 
 (密码:wang3436)
 
@@ -39,25 +39,15 @@ registry.cn-shenzhen.aliyuncs.com`
 
 ### 2.6. 运行docker环境
 `nvidia-docker run -it \
-
 --rm \
-
 --name ad_competition \
-
 -p 4112:4112 \
-
 -p 18080:18080 \ 
-
 -p 4040:4040 \
-
 -v /etc/localtime:/etc/localtime \
-
 -v $DOWNLOAD_SPARK_ENV_PATH:/home/spark_env \
-
 -v $PROJECT_PATH:/home/Tecent_2020_Ad_Competition \
-
 registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5 \
-
 /bin/bash`
 
 ## 三、代码运行说明
