@@ -32,7 +32,7 @@ WARN = logging.WARN
 INFO = logging.INFO
 DEBUG = logging.DEBUG
 
-# log output type
+# log submission type
 STREAM = "stream"
 SYSLOG = "syslog"
 FILE_AND_TERMINAL = "file_and_termianl"
@@ -79,7 +79,7 @@ class LogManager(object):
 
         formatlist = ['%(asctime)s', '%(name)s', '%(levelname)s', '%(message)s']
         formatter = logging.Formatter(' - '.join(formatlist))
-        if LogManager.log_handle ==FILE_AND_TERMINAL:  # create handler, output the msg in terminal and log at the meantime
+        if LogManager.log_handle ==FILE_AND_TERMINAL:  # create handler, submission the msg in terminal and log at the meantime
             fh = LogManager.getFileHandler(get_log_path())
             ch = logging.StreamHandler()
             ch.setLevel(LogManager.log_level)
@@ -88,7 +88,7 @@ class LogManager(object):
             fh.setFormatter(formatter)
             logger.addHandler(ch)
             logger.addHandler(fh)
-        elif LogManager.log_handle == TERMINAL:  # just output to terminal
+        elif LogManager.log_handle == TERMINAL:  # just submission to terminal
             ch = logging.StreamHandler()
             ch.setLevel(LogManager.log_level)
             ch.setFormatter(formatter)

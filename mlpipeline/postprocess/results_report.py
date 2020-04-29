@@ -5,6 +5,6 @@ Email: wangmengqiu@ainnovation.com
 Date: 10/04/2020
 
 Description: 
-   Analysis and visualize model output
+   Analysis and visualize model submission
     
 """
