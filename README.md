@@ -44,7 +44,7 @@ docker build -t 'tencent_2020_ad_competition:latest' .
 git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 ```
 
-### 2.5. 下载数据集以及spark运行组件, 将数据集放于项目的data文件夹下
+### 2.5. 下载数据集以及spark运行组件, 将数据集放于项目的一级目录data文件夹下(需新建)
 ``
 
 ### 2.6. 运行docker环境
