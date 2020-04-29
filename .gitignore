@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+# lib/
 lib64/
 parts/
 sdist/
@@ -133,14 +133,13 @@ dmypy.json
 *.json
 *.pyc
 *.pkl
-data/
+data/*
 #*.model
 log/
 .idea/
 *.iml
 submission/
 figs/
-tcdata/
-trained_model/
+trained_models/*
 best_models/
 
