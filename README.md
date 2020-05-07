@@ -36,18 +36,20 @@ registry.cn-shenzhen.aliyuncs.com
 docker pull registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5
 ```
 
-### 2.3. 构建运行环境
-cd到项目目录下, 运行如下命令,通过Dockerfile构建运行环境
 
-```
-docker build -t 'tencent_2020_ad_competition:latest' .
-``` 
 
-### 2.4. clone代码
+### 2.3. clone代码
 
 ```
 git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 ```
+
+### 2.4. 构建运行环境
+cd到项目目录下, 运行如下命令以Dockerfile构建运行环境
+
+```
+docker build -t 'tencent_2020_ad_competition:latest' .
+``` 
 
 ### 2.5. 数据集以及运行组件下载
 从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后放于项目的一级目录data文件夹下(Ps.data文件夹需新建)  
