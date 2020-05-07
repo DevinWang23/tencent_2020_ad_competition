@@ -48,8 +48,10 @@ docker build -t 'tencent_2020_ad_competition:latest' .
 git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 ```
 
-### 2.5. 从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后放于项目的一级目录data文件夹下(Ps.data文件夹需新建)
-data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3 
+### 2.5. 数据集以及运行组件下载
+从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后放于项目的一级目录data文件夹下(Ps.data文件夹需新建)
+data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3  
+
 spark运行组件网盘地址: https://pan.baidu.com/s/1cKp-jIPtcVlTyDmOmV03zA 提取码: i9f4
 
 ### 2.6. 运行docker环境
@@ -80,13 +82,16 @@ cp /home/spark_env/.bashrc ~/.bashrc
 ### 3.1. 数据格式化以及预处理 
 
 `cd mlpipeline/preprocess`
+
 `python3 data_reformat.py`
+
 `python3 data_preprocess.py`
 
 
 ### 3.2. 特征工程
 
 `cd mlpipeline/feature_engineering`
+
 `python3 feature_engineering.py`
 
 
