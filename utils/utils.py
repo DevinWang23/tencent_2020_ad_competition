@@ -14,14 +14,11 @@ from time import time
 from datetime import timedelta
 from functools import wraps
 import joblib
-from Crypto.Cipher import AES
-from binascii import b2a_hex, a2b_hex
 
 import numpy as np
 import pandas as pd
 
 from .log_manager import LogManager
-
 sys.path.append('../')
 import conf
 
@@ -107,7 +104,7 @@ def get_latest_model(dir_path, file_prefix=None):
 
 
 @timer(logger)
-def correct_column_type(fe_df, use_float16=False):
+def correct_column_type_by_value_range(fe_df, use_float16=False):
     index_cols, cate_cols, cont_cols, label_cols = check_columns(fe_df.dtypes.to_dict())
 
     def __reduce_cont_cols_mem_by_max_min_value():
