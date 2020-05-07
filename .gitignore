@@ -125,7 +125,7 @@ dmypy.json
 # User-define
 *.xml
 *.tgz
-*.pdf
+# *.pdf
 *.pptx
 *.png
 *.npy
