@@ -1,4 +1,8 @@
 # 2020腾讯广告算法大赛
+广告受众基础属性预估 - 根据用户在不同广告上的反馈，同时预测出其年龄和性别  
+
+* [参赛手册](./docs/2020腾讯广告算法大赛参赛手册.pdf)
+* [原始输入数据说明](./docs/2020腾讯广告算法大赛数据说明.xlsx)
 
 ## 一、 解决方案以及不足
 
@@ -91,3 +95,8 @@ registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-p
 [1] 2019腾讯广告算法大赛round1冠军github: <https://github.com/guoday/Tencent2019_Preliminary_Rank1st>
 
 [2] 2019腾讯广告算法大赛round2冠军github: <https://github.com/bettenW/Tencent2019_Finals_Rank1st>
+
+[3] 易观性别年龄预测第一名解决方案github: <https://github.com/chizhu/yiguan_sex_age_predict_1st_solution>
+
+[4] 华为用户人口属性（i.e. 年龄段）预测解决方案github:
+<https://github.com/luoda888/HUAWEI-DIGIX-AgeGroup>
