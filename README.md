@@ -52,9 +52,9 @@ docker build -t 'tencent_2020_ad_competition:latest' .
 ``` 
 
 ### 2.5. 数据集以及运行组件下载
-从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后放于项目的一级目录data文件夹下(Ps.data文件夹需新建)  
+从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后需放于项目的一级目录data文件夹下(Ps.data文件夹需新建)  
 
-data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3  
+初赛data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3  
 
 spark运行组件网盘地址: https://pan.baidu.com/s/1cKp-jIPtcVlTyDmOmV03zA 提取码: i9f4
 
@@ -103,7 +103,7 @@ cp /home/spark_env/.bashrc ~/.bashrc
 
 `python3 train.py`
 
-### 3.4. 任务预测以及生成提交结果于submission文件夹(Ps.需新建)
+### 3.4. 任务预测以及生成提交结果于submission文件夹(Ps.submission文件夹需新建)
 
 `python3 predict.py` 
 
