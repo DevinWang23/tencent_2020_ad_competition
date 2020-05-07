@@ -48,10 +48,9 @@ docker build -t 'tencent_2020_ad_competition:latest' .
 git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
 ```
 
-### 2.5. 下载数据集以及spark运行组件, 将数据集放于项目的一级目录data文件夹下(需新建)
-```
-cp /home/spark_env/.bashrc ~/.bashrc
-```
+### 2.5. 从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后放于项目的一级目录data文件夹下(Ps.data文件夹需新建)
+data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3 
+spark运行组件网盘地址: https://pan.baidu.com/s/1cKp-jIPtcVlTyDmOmV03zA 提取码: i9f4
 
 ### 2.6. 运行docker环境
 ```
@@ -69,27 +68,35 @@ registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-p
 /bin/bash
 ```
 
+### 2.7. 在container中配置spark运行环境
+`
+cp /home/spark_env/.bashrc ~/.bashrc
+`
+
 ## 三、代码运行说明
 
 以如下pipeline逐步生成最终提交文件
 
-### 3.1. 数据预处理 
+### 3.1. 数据格式化以及预处理 
 
-运行 `python3 data_preprocess.py`
+`cd mlpipeline/preprocess`
+`python3 data_reformat.py`
+`python3 data_preprocess.py`
 
 
 ### 3.2. 特征工程
 
-运行 `python3 feature_engineering.py`
+`cd mlpipeline/feature_engineering`
+`python3 feature_engineering.py`
 
 
-### 3.3. 模型训练
+### 3.3. 参数选择, 模型评估以及训练
 
-运行 `python3 train.py` 进行参数选择，模型评估以及生成*.model用于最终预测.
+`python3 train.py`
 
-### 3.4. 任务预测
+### 3.4. 任务预测以及生成提交结果于submission文件夹
 
-运行 `python3 predict.py` 生成最终针对线上测试集的预测结果.
+`python3 predict.py` 
 
 ## 参考学习资料
 [1] 2019腾讯广告算法大赛round1冠军github: <https://github.com/guoday/Tencent2019_Preliminary_Rank1st>
