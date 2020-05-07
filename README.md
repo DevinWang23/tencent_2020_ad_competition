@@ -36,7 +36,8 @@ registry.cn-shenzhen.aliyuncs.com
 docker pull registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5
 ```
 
-### 2.3. cd到项目目录下, 通过Dockerfile构建docker
+### 2.3. 构建运行环境
+cd到项目目录下, 运行如下命令,通过Dockerfile构建运行环境
 
 ```
 docker build -t 'tencent_2020_ad_competition:latest' .
