@@ -15,6 +15,9 @@ from .utils import (
                    save_model,
                    check_columns,
                    check_nan_value,
-                   correct_column_type_by_value_range
+                   correct_column_type_by_value_range,
+                   remove_cont_cols_with_unique_value,
+                   standard_scale,
+                   log_scale
 )
 from .log_manager import LogManager

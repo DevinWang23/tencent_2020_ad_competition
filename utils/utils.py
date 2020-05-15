@@ -17,6 +17,7 @@ import joblib
 
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 from .log_manager import LogManager
 sys.path.append('../')
@@ -27,8 +28,14 @@ LogManager.created_filename = os.path.join(conf.LOG_DIR, 'utils.log')
 logger = LogManager.get_logger(__name__)
 
 # global variables
-SELECTED_INDEX = []
-SELECTED_LABEL = []
+SELECTED_INDEX = [
+    'user_id',
+    'time',
+    'creative_id',
+    'ad_id',
+    'product_id',
+    'advertiser_id']
+SELECTED_LABEL = ['age', 'gender', 'y']
 
 
 def get_time_diff(start_time, end_time):
@@ -104,50 +111,59 @@ def get_latest_model(dir_path, file_prefix=None):
 
 
 @timer(logger)
-def correct_column_type_by_value_range(fe_df, use_float16=False):
-    index_cols, cate_cols, cont_cols, label_cols = check_columns(fe_df.dtypes.to_dict())
+def correct_column_type_by_value_range(
+    df, 
+    use_float16=False,
+):
+    index_cols, cate_cols, cont_cols, label_cols = check_columns(df.dtypes.to_dict())
 
     def __reduce_cont_cols_mem_by_max_min_value():
         for col in cont_cols:
-            c_min = fe_df[col].min()
-            c_max = fe_df[col].max()
-            if str(fe_df[col].dtypes)[:3] == "int":  # judge col_type by type prefix
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if str(df[col].dtypes)[:3] == "int":  # judge col_type by type prefix
                 if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
-                    fe_df[col] = fe_df[col].astype(np.int8)
+                    df[col] = df[col].astype(np.int8)
                 elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
-                    fe_df[col] = fe_df[col].astype(np.int16)
+                    df[col] = df[col].astype(np.int16)
                 elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
-                    fe_df[col] = fe_df[col].astype(np.int32)
+                    df[col] = df[col].astype(np.int32)
                 else:
-                    fe_df[col] = fe_df[col].astype(np.int64)
+                    df[col] = df[col].astype(np.int64)
             else:
 
                 # space and accuracy trade-off
                 if use_float16 and c_min > np.finfo(np.float16).min and c_max < np.finfo(np.float16).max:
-                    fe_df[col] = fe_df[col].astype(np.float16)
+                    df[col] = df[col].astype(np.float16)
                 elif c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
-                    fe_df[col] = fe_df[col].astype(np.float32)
+                    df[col] = df[col].astype(np.float32)
                 else:
-                    fe_df[col] = fe_df[col].astype(np.float64)
+                    df[col] = df[col].astype(np.float64)
 
     __reduce_cont_cols_mem_by_max_min_value()
 
     ## some user-defined data types
-    # fe_columns = fe_df.columns
-    # if 'model' in fe_columns:
-    #     fe_df['model'] = fe_df['model'].astype(np.int8)
-    # if 'tag' in fe_columns:
-    #     fe_df['tag'] = fe_df['tag'].astype(np.int8)
-    # if 'flag' in fe_columns:
-    #     fe_df['flag'] = fe_df['flag'].astype(np.int8)
-    # if '30_day' in fe_columns:
-    #     fe_df['30_day'] = fe_df['30_day'].astype(np.int8)
-    # if 'dt' in fe_columns:
-    #     fe_df['dt'] = pd.to_datetime(fe_df['dt'], format='%Y%m%d')
-    #     fe_df.sort_values(by='dt', inplace=True)
-    # if 'fault_time' in fe_columns:
-    #     fe_df['fault_time'] = pd.to_datetime(fe_df['fault_time'], format='%Y%m%d')
-    logger.info('col_types: %s' % fe_df.dtypes)
+    columns = df.columns
+    if 'time' in columns:
+        df['time'] = df['time'].astype(np.int8)
+    if 'y' in columns:
+        df['y'] = df['y'].astype(np.int8)
+    if 'ad_id' in columns:
+        df['ad_id'] = df['ad_id'].astype(np.int32)
+#     if 'product_id' in columns:
+#         df['product_id'] = df['product_id'].astype(np.int32)
+    if 'advertiser_id' in columns:
+        df['advertiser_id'] = df['advertiser_id'].astype(np.int32)
+    if 'product_category' in columns:
+        df['product_category'] = df['product_category'].astype('category')
+    if 'industry' in columns:
+        df['industry'] = df['industry'].astype('category')
+    if 'age' in columns:
+        df['age'] = df['age'].astype(np.int8)
+    if 'gender' in columns:
+        df['gender'] = df['gender'].astype(np.int8)
+    df.sort_values(by='time', inplace=True)
+    logger.info('col_types: %s' % df.dtypes)
 
 
 # @timer(logger)
@@ -191,12 +207,17 @@ def remove_cont_cols_with_unique_value(fe_df, cont_cols, threshold=3):
 
 
 @timer(logger)
-def check_nan_value(fe_df, threshold=30):
+def check_nan_value(df, threshold=30):
     nan_cols = []
-    for col in fe_df.columns:
-        miss_ratio = round((fe_df[col].isnull().sum() / fe_df.shape[0]) * 100, 2)
-        logger.info("%s - %s%%" % (col, miss_ratio))
-        if miss_ratio >= threshold:
+    for col in df.columns:
+        num_null = df[col].isnull().sum()
+        missing_ratio = round((num_null / df.shape[0]) * 100, 2)
+        logger.info("%s - missing_number: %s, missing_ratio:%s%%" % (
+                                                                        col, 
+                                                                        num_null, 
+                                                                        missing_ratio,
+                                                                    ))
+        if missing_ratio >= threshold:
             nan_cols += [col]
     logger.info('drop cols: %s' % nan_cols)
     return nan_cols
@@ -211,8 +232,29 @@ def check_columns(col_dict):
         elif col in SELECTED_LABEL:
             label_cols.append(col)
         # judge cont cols type by its type prefix
-        elif str(col_dict[col])[:5] == 'float' or str(col_dict[col])[:3] == 'int':
+        elif str(col_dict[col])[:5] == 'float' or str(col_dict[col])[:3] == 'int' or str(col_dict[col])[:6]=='Sparse':
             cont_cols.append(col)
         else:
             cate_cols.append(col)
     return index_cols, cate_cols, cont_cols, label_cols
+
+@timer(logger)
+def log_scale(
+              fe_df,
+              cont_cols,
+             ):
+    for cont_col in tqdm(cont_cols):
+        fe_df.loc[:, cont_col] = np.log2(fe_df[cont_col] + 1e-8)
+    return fe_df
+
+@timer(logger)
+def standard_scale(
+                   cont_cols,
+                   X_train,
+                   X_valid=pd.DataFrame()):
+    scaler = StandardScaler().fit(X_train[cont_cols])
+    X_train.loc[:, cont_cols] = scaler.transform(X_train[cont_cols])
+    if not X_valid.empty:
+        X_valid.loc[:, cont_cols] = scaler.transform(X_valid[cont_cols])
+        return X_train, X_valid
+    return X_train, scaler

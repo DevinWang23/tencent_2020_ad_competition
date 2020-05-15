@@ -20,5 +20,5 @@ TEST_DATA_DIR = os.path.join(DATA_DIR, 'test')
 SUBMISSION_DIR = os.path.join(ROOT_DIR, 'submission')
 LIB_DIR = os.path.join(ROOT_DIR, 'lib')
 FIGS_DIR = os.path.join(ROOT_DIR, 'figs')
-
+TRAINED_MODEL_DIR = os.path.join(ROOT_DIR, 'trained_models')
 
