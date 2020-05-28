@@ -424,36 +424,36 @@ def neural_train(
                     true = labels.data.cpu()
                     pred = torch.max(outputs.data, 1)[1].cpu()
                     train_acc = metrics.accuracy_score(true, pred)
-#                     dev_acc, dev_loss = _neural_eval(config, model, dev_iter)
-#                     if dev_loss < dev_best_loss:
-#                         dev_best_loss = dev_loss
-#                         torch.save(model.state_dict(), config.save_path)
-#                         improve = '*'
-#                         last_improve = total_batch
-#                     else:
-#                         improve = ''
+                    dev_acc, dev_loss = _neural_eval(config, model, dev_iter)
+                    if dev_loss < dev_best_loss:
+                        dev_best_loss = dev_loss
+                        torch.save(model.state_dict(), config.save_path)
+                        improve = '*'
+                        last_improve = total_batch
+                    else:
+                        improve = ''
                     end_time = time.time()
                     time_diff = get_time_diff(start_time, end_time)
-#                     msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},  Val Loss: {3:>5.2},  ' \
-#                           'Val Acc: {4:>6.2%},  Time: {5} {6}'
-#                     logger.info(msg.format(total_batch, loss.item(), train_acc, dev_loss, dev_acc, time_diff, improve))
-                    msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},' \
-                          'Time: {3}'
-                    logger.info(msg.format(total_batch, loss.item(), train_acc, time_diff))
+                    msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},  Val Loss: {3:>5.2},  ' \
+                          'Val Acc: {4:>6.2%},  Time: {5} {6}'
+                    logger.info(msg.format(total_batch, loss.item(), train_acc, dev_loss, dev_acc, time_diff, improve))
+#                     msg = 'Iter: {0:>6},  Train Loss: {1:>5.2},  Train Acc: {2:>6.2%},' \
+#                           'Time: {3}'
+#                     logger.info(msg.format(total_batch, loss.item(), train_acc, time_diff))
                     writer.add_scalar("loss/train", loss.item(), total_batch)
-#                     writer.add_scalar("loss/dev", dev_loss, total_batch)
+                    writer.add_scalar("loss/dev", dev_loss, total_batch)
                     writer.add_scalar("acc/train", train_acc, total_batch)
-#                     writer.add_scalar("acc/dev", dev_acc, total_batch)
-#                     model.train()
+                    writer.add_scalar("acc/dev", dev_acc, total_batch)
+                    model.train()
                 total_batch += 1
-#                 if total_batch - last_improve > config.required_improvement:
-#                     logger.info("No optimization for a long time, auto-stopping...")
-#                     flag = True
-#                     break
+                if total_batch - last_improve > config.required_improvement:
+                    logger.info("No optimization for a long time, auto-stopping...")
+                    flag = True
+                    break
 
-#             if flag:
-#                 break
-        torch.save(model.state_dict(), config.save_path)
+            if flag:
+                break
+#         torch.save(model.state_dict(), config.save_path)
         writer.close()
         
         return model 
