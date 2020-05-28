@@ -12,9 +12,14 @@ import sys
 import os
 import argparse
 from datetime import datetime
+from importlib import import_module
+import time
 
 import pandas as pd
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
 from .train import (
     label_map_dict,
@@ -28,6 +33,9 @@ from utils import (
     timer,
     load_model,
     log_scale,
+    build_iterater,
+    build_dataset,
+    get_time_diff,
 )
 
 
@@ -38,8 +46,8 @@ logger = LogManager.get_logger(__name__)
 @timer(logger)
 def _generate_submission_file(submission_df):
     if use_label_col == ['y']:
-        submission_df['predicted_gender'] = submission_df['pred'].apply(lambda x: label_map_dict[x][0])
-        submission_df['predicted_age'] = submission_df['pred'].apply(lambda x: label_map_dict[x][1])
+        submission_df.loc[:,'predicted_gender'] = submission_df['pred'].apply(lambda x: label_map_dict[x][0])
+        submission_df.loc[:,'predicted_age'] = submission_df['pred'].apply(lambda x: label_map_dict[x][1])
     elif use_label_col == ['gender']:
         submission_df.loc[:,'pred'] = submission_df['pred'] + 1
         submission_df.rename(columns={'pred':'predicted_gender'}, inplace=True)
@@ -48,8 +56,10 @@ def _generate_submission_file(submission_df):
         submission_df.rename(columns={'pred':'predicted_age'}, inplace=True)
     else:
         raise ValueError('input use_label_col out of range')
-    submission_save_path = os.path.join(conf.SUBMISSION_DIR,'submission_%s_%s.csv'%(use_label_col[0],                                                                                                               datetime.now().isoformat()))
-    submission_df = submission_df.drop(columns=['pred'])
+        
+    submission_save_path = os.path.join(conf.SUBMISSION_DIR,'submission_%s_%s.csv'%(use_label_col[0], datetime.now().isoformat()))
+    if 'pred' in submission_df.columns:
+        submission_df = submission_df.drop(columns=['pred'])
     submission_df.to_csv(submission_save_path,index=False)
     logger.info('submission file has been stored in %s'%submission_save_path)
     return submission_df
@@ -87,7 +97,6 @@ def inference_pipeline_ensemble_and_linear(
     pred = [np.argmax(pred_arr) for pred_arr in model.predict(X_test)]
     submission_df = fe_df[['user_id']]
     submission_df.loc[:,'pred'] = pred
-    submission_df = _generate_submission_file(submission_df)
     
     return submission_df
     
@@ -95,11 +104,47 @@ def inference_pipeline_ensemble_and_linear(
 @timer(logger)
 def inference_pipeline_neural(
         fe_df,
-        model_save_path=None,
-        model_name=None,
-):
-    raise NotImplementedError
+        model_module,
+        model_params,
+):  
+    
+    np.random.seed(1)
+    torch.manual_seed(1)
+    torch.cuda.manual_seed_all(1)
+    torch.backends.cudnn.deterministic = True 
+    config = model_module.Config(**model_params)
+    vocab_dict, test_data,  = build_dataset(
+                                           config, 
+                                           X_test=fe_df, 
+                                           is_train=False,
+            )
+    config.n_vocab = len(vocab_dict)
 
+    start_time = time.time()
+    logger.info("Loading data...")
+    test_iter = build_iterater(test_data, config, is_train=False)
+    end_time = time.time()
+    time_diff = get_time_diff(start_time, end_time)
+    logger.info("Time usage:%s" % time_diff)
+    
+    model = model_module.Model(config).to(config.device)
+    state_dict = torch.load(config.save_path, map_location='cpu')
+    model.load_state_dict(state_dict)
+    model.to(config.device)
+    del state_dict
+    torch.cuda.empty_cache()
+#     model.load_state_dict(torch.load(config.save_path))
+    model.eval()
+    pred = np.array([], dtype=int)
+    with torch.no_grad():
+        for seq in test_iter:
+            outputs = model(seq)
+            sub_pred = torch.max(outputs.data, 1)[1].cpu().numpy()
+            pred = np.append(pred, sub_pred)
+            
+    submission_df = fe_df[['user_id']]
+    submission_df.loc[:,'pred'] = pred
+    return submission_df
 
 @timer(logger)
 def inference_pipeline_stacking(
@@ -113,11 +158,12 @@ def inference_pipeline_stacking(
 @timer(logger)
 def predict(
         test_fe_filename,
-        use_log,
-        use_std,
-        model_type,
-        model_name,
-        scaler,
+        use_log=False,
+        use_std=False,
+        model_type='neural',
+        model_name='lstm',
+        model_params={},
+        scaler='',
 ):  
     logger.info('test_fe_filename: %s, use_log: %s, use_std: %s, model_type: %s, model_name: %s'%(
                                                                                             test_fe_filename,
@@ -127,15 +173,28 @@ def predict(
                                                                                             model_name, 
     ))
     test_fe_df = pd.read_feather(os.path.join(conf.DATA_DIR, test_fe_filename))
-    model_save_path = get_latest_model(conf.TRAINED_MODEL_DIR, '%s.model' % model_name)
     if model_type == 'linear' or model_type=='ensemble':
+        model_save_path = get_latest_model(conf.TRAINED_MODEL_DIR, '%s.model' % model_name)
         submission_df = inference_pipeline_ensemble_and_linear(
                                                               test_fe_df, 
                                                               use_log,
                                                               use_std,
                                                               scaler,
                                                               model_save_path=model_save_path,
-                                                              model_name=model_name)
+                                                              model_name=model_name
+        )
+    elif model_type == 'neural':
+        model_module = import_module('models.neural_network.' + model_name)
+        submission_df = inference_pipeline_neural(
+                                                  test_fe_df, 
+                                                  model_module,
+                                                  model_params
+         )
+        torch.cuda.empty_cache()
+    else:
+        raise NotImplementedError('model type %s out of range'%model_type)
+    
+    submission_df = _generate_submission_file(submission_df)
     
     return  submission_df
 
