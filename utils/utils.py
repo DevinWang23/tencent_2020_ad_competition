@@ -277,20 +277,23 @@ class DatasetIterater(object):
         self.index = 0
         self.device = kwargs['device']
         self.is_train = kwargs['is_train']
+        self.num_sparse_feat = kwargs['num_sparse_feat']
     
     def _to_tensor(self, data):
-        x1 = torch.LongTensor([_[0] for _ in data]).to(self.device)
-        x2 = torch.LongTensor([_[2] for _ in data]).to(self.device)
+        x_list = [torch.LongTensor([_[i] for _ in data]).to(self.device) for i in range(self.num_sparse_feat*2) if not i&1]
+        seq_len_list = [torch.LongTensor([_[i] for _ in data]).to(self.device) for i in range(self.num_sparse_feat*2) if i&1]
+        x_seq_list = []
+        for i in range(self.num_sparse_feat):
+            x_seq_list += [x_list[i], seq_len_list[i]]
+#         x1 = torch.LongTensor([_[0] for _ in data]).to(self.device)
+#         x2 = torch.LongTensor([_[2] for _ in data]).to(self.device)
         if self.is_train:
             y = torch.LongTensor([_[-1] for _ in data]).to(self.device)
-            # pad前的长度(超过pad_size的设为pad_size)
-            seq_len1 = torch.LongTensor([_[1] for _ in data]).to(self.device)
-            seq_len2 = torch.LongTensor([_[3] for _ in data]).to(self.device)
-            return (x1, seq_len1,x2,seq_len2), y
+#             seq_len1 = torch.LongTensor([_[1] for _ in data]).to(self.device)
+#             seq_len2 = torch.LongTensor([_[3] for _ in data]).to(self.device)
+            return tuple(x_seq_list), y 
         else:
-            seq_len1 = torch.LongTensor([_[1] for _ in data]).to(self.device)
-            seq_len2 = torch.LongTensor([_[3] for _ in data]).to(self.device)
-            return (x1, seq_len1,x2,seq_len2)
+            return tuple(x_seq_list)
        
     def __next__(self):
         if self.residue and self.index == self.n_batches:
@@ -323,7 +326,13 @@ def build_iterater(
                    config,
                    is_train,
                    ):
-    iter_ = DatasetIterater(batches=dataset, batch_size=config.batch_size, device=config.device, is_train=is_train)
+    iter_ = DatasetIterater(
+        batches=dataset,
+        batch_size=config.batch_size,
+        device=config.device, 
+        is_train=is_train,
+        num_sparse_feat=config.num_sparse_feat
+    )
     return iter_
 
 @timer(logger)
