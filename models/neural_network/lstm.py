@@ -35,28 +35,89 @@ class Model(nn.Module):
         config
     ):
         super(Model, self).__init__()
-        if config.embed_pretrained is not None:
-            self.embedding = nn.Embedding.from_pretrained(config.embed_pretrained, freeze=True)
-        else:
-            self.embedding = nn.Embedding(config.n_vocab, config.embed_dim, padding_idx=config.n_vocab - 1)
+        if config.embed_pretrained_list[0] is not None:
+            self.embedding1 = nn.Embedding.from_pretrained(
+                config.embed_pretrained_list[0], 
+                freeze=True
+            )
+        
+        if config.embed_pretrained_list[1] is not None:
+            self.embedding2 = nn.Embedding.from_pretrained(
+                config.embed_pretrained_list[1], 
+                freeze=True
+            )
+        
+        if config.embed_pretrained_list[2] is not None:
+            self.embedding3 = nn.Embedding.from_pretrained(
+                config.embed_pretrained_list[2], 
+                freeze=True
+            )
+        
+#         if config.embed_pretrained_list[3] is not None:
+#             self.embedding4 = nn.Embedding.from_pretrained(
+#                 config.embed_pretrained_list[3], 
+#                 freeze=True
+#             )
             
-        self.dropout = nn.Dropout(config.dropout)
-        self.lstm = nn.LSTM(
-            config.embed_dim, 
+#         self.dropout = nn.Dropout(config.dropout)
+        self.lstm1 = nn.LSTM(
+            config.embed_dim_list[0], 
             config.hidden_size,
             num_layers=config.num_layers,
-#             dropout=config.dropout,
             bidirectional=config.bidirectional,
+            batch_first=True,
+            
         )
-#             batch_first=True)
-        self.fc = nn.Linear(config.hidden_size * config.num_layers * 2, config.num_classes) if config.bidirectional else                   nn.Linear(config.hidden_size * config.num_layers, config.num_classes)
+        
+        self.lstm2 = nn.LSTM(
+            config.embed_dim_list[1], 
+            config.hidden_size,
+            num_layers=config.num_layers,
+            bidirectional=config.bidirectional,
+            batch_first=True
+        )
+        
+        self.lstm3 = nn.LSTM(
+            config.embed_dim_list[2], 
+            config.hidden_size,
+            num_layers=config.num_layers,
+            bidirectional=config.bidirectional,
+            batch_first=True
+        )
+        
+#         self.lstm4 = nn.LSTM(
+#             config.embed_dim_list[3], 
+#             config.hidden_size,
+#             num_layers=config.num_layers,
+#             bidirectional=config.bidirectional,
+#         )
+        self.fc = nn.Linear(config.hidden_size * config.num_layers * 2 * config.num_sparse_feat, config.num_classes) if                           config.bidirectional else nn.Linear(config.hidden_size * config.num_layers * config.num_sparse_feat,                           config.num_classes)
     
     def forward(self,x):
-        out = self.embedding(x[0])
+        out1 = self.embedding1(x[0])
+        out2 = self.embedding2(x[2])
+        out3 = self.embedding3(x[4])
+#         out4 = self.embedding4(x[6])
 #         out = self.dropout(out)
-        out = torch.transpose(out, dim0=1,dim1=0)
-        out = pack_padded_sequence(out, x[1], batch_first=False, enforce_sorted=False)
-        out, (ht, ct) = self.lstm(out)
-        out = self.fc(ht[-1])
+        
+        out1  = pack_padded_sequence(out1, x[1],enforce_sorted=False, batch_first=True)
+        out2  = pack_padded_sequence(out2, x[3],enforce_sorted=False, batch_first=True)
+        out3  = pack_padded_sequence(out3, x[5],enforce_sorted=False, batch_first=True)
+#         out4  = pack_padded_sequence(out4, x[7],enforce_sorted=False, batch_first=False)
+
+        self.lstm1.flatten_parameters()
+        self.lstm2.flatten_parameters()
+        self.lstm3.flatten_parameters()
+#         self.lstm4.flatten_parameters()
+        
+        out1, (final_hidden_state1, final_cell_state1) = self.lstm1(out1)
+        out2, (final_hidden_state2, final_cell_state2) = self.lstm2(out2)
+        out3, (final_hidden_state3, final_cell_state3) = self.lstm3(out3)
+        
+#         out4, (final_hidden_state4, final_cell_state4) = self.lstm3(out4)
+#         print(final_hidden_state1[-1].shape)
+        out = torch.cat((final_hidden_state1[-1], final_hidden_state2[-1], final_hidden_state3[-1]),dim=1)
+        
+        logit = self.fc(out)
 #         out = self.fc(self.dropout(torch.cat([ct[i,:,:] for i in range(ct.shape[0])], dim=1)))
-        return out
+        return logit

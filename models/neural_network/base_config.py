@@ -24,6 +24,7 @@ class BaseConfig(object):
         self.test_path = os.path.join(conf.DATA_DIR, 'neural_test_fe_df.feather')
         self.num_classes = kwargs['num_classes']
         self.sparse_feat = kwargs['sparse_feat']
+        self.num_sparse_feat = len(kwargs['sparse_feat'])
         self.max_seq_len = kwargs['max_seq_len']
         self.use_pad = kwargs['use_pad']
         self.init_method = kwargs['init_method']
@@ -36,17 +37,27 @@ class BaseConfig(object):
         # Use embedding or not
         self.embed = kwargs.pop('embed', [])
         if self.embed != []:
-            self.embed_pretrained1 = torch.tensor(
-                np.load(os.path.join(conf.DATA_DIR, self.embed[0])).astype('float32')) \
-                if self.embed[0] != '' else None
-            self.embed_dim1 = self.embed_pretrained1.size(1) \
-                if self.embed_pretrained1 is not None else DEFAULT_EMBEDDING_SIZE
+            self.embed_pretrained_list = []
+            for embed_path in self.embed:
+                self.embed_pretrained_list += [
+                torch.tensor(np.load(os.path.join(conf.DATA_DIR, embed_path)).astype('float32')), 
+                ]
+                
+            self.embed_dim_list = []
+            for embed_pretrained in self.embed_pretrained_list:
+                self.embed_dim_list += [embed_pretrained.size(1)]
+                
+#             self.embed_pretrained1 = torch.tensor(
+#                 np.load(os.path.join(conf.DATA_DIR, self.embed[0])).astype('float32')) \
+#                 if self.embed[0] != '' else None
+#             self.embed_dim1 = self.embed_pretrained1.size(1) \
+#                 if self.embed_pretrained1 is not None else DEFAULT_EMBEDDING_SIZE
             
-            self.embed_pretrained2 = torch.tensor(
-                np.load(os.path.join(conf.DATA_DIR, self.embed[1])).astype('float32')) \
-                if self.embed[1] != '' else None
-            self.embed_dim2 = self.embed_pretrained2.size(1) \
-                if self.embed_pretrained2 is not None else DEFAULT_EMBEDDING_SIZE
+#             self.embed_pretrained2 = torch.tensor(
+#                 np.load(os.path.join(conf.DATA_DIR, self.embed[1])).astype('float32')) \
+#                 if self.embed[1] != '' else None
+#             self.embed_dim2 = self.embed_pretrained2.size(1) \
+#                 if self.embed_pretrained2 is not None else DEFAULT_EMBEDDING_SIZE
             
         # Size of vocab, assigning value when train
         self.n_vocab_list = DEFAULT_INITIAL_VALUE
