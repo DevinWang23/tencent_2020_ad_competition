@@ -116,3 +116,5 @@ cp /home/spark_env/.bashrc ~/.bashrc
 
 [4] 华为用户人口属性（i.e. 年龄段）预测解决方案github:
 <https://github.com/luoda888/HUAWEI-DIGIX-AgeGroup>
+
+[5] 2020腾讯广告算法大赛冠军github: <https://github.com/guoday/Tencent2020_Rank1st>
