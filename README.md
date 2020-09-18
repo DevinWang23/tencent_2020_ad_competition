@@ -120,3 +120,5 @@ cp /home/spark_env/.bashrc ~/.bashrc
 [5] 2020腾讯广告算法大赛冠军github: <https://github.com/guoday/Tencent2020_Rank1st>
 
 [6] 2020腾讯广告算法大赛冠军知乎: <https://zhuanlan.zhihu.com/p/166710532>
+
+[7] 2020腾讯广告算法大赛亚军知乎：https://zhuanlan.zhihu.com/p/185045764
