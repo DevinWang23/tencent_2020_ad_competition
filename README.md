@@ -1,5 +1,5 @@
 # 2020腾讯广告算法大赛
-广告受众基础属性预估 - 根据用户在不同广告上的反馈，同时预测出其年龄和性别  
+广告受众基础属性预估 - 根据用户历史点击广告行为，同时预测出其年龄和性别，以性别准确率 + 年龄准确率为评估指标，最终线上1.47659（37/1008）  
 
 * [参赛手册](./docs/2020腾讯广告算法大赛参赛手册.pdf)
 * [原始输入数据说明](./docs/2020腾讯广告算法大赛数据说明.xlsx)
@@ -20,64 +20,6 @@ docker version - 18.09.7
 nvidia-docker version - 2.2.2
 
 git
-
-### 2.1. 登录镜像管理帐号
-
-```
-docker login \
---username=wmq王王 \  
-registry.cn-shenzhen.aliyuncs.com
-``` 
-(密码:wang3436)
-
-### 2.2. 拉取docker
-
-```
-docker pull registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5
-```
-
-
-
-### 2.3. clone代码
-
-```
-git clone https://github.com/DevinWang23/tencent_2020_ad_competition.git
-```
-
-### 2.4. 构建运行环境
-cd到项目目录下, 运行如下命令以Dockerfile构建运行环境
-
-```
-docker build -t 'tencent_2020_ad_competition:latest' .
-``` 
-
-### 2.5. 数据集以及运行组件下载
-从百度网盘下载数据集以及spark运行组件压缩文件, 数据集解压后需放于项目的一级目录data文件夹下(Ps.data文件夹需新建)  
-
-初赛data网盘地址: https://pan.baidu.com/s/1oXMXVRs5i7lgkF-Yr9aTag 提取码: jey3  
-
-spark运行组件网盘地址: https://pan.baidu.com/s/1cKp-jIPtcVlTyDmOmV03zA 提取码: i9f4
-
-### 2.6. 运行docker环境
-```
-nvidia-docker run \
--it \
---rm \
---name ad_competition \
--p 4112:4112 \
--p 18080:18080 \ 
--p 4040:4040 \
--v /etc/localtime:/etc/localtime \
--v $DOWNLOAD_SPARK_ENV_PATH:/home/spark_env \
--v $PROJECT_PATH:/home/Tecent_2020_Ad_Competition \
-registry.cn-shenzhen.aliyuncs.com/mengqiu/machine_learning:pytorch1.4-cuda10.1-py3-spark2.4.5 \
-/bin/bash
-```
-
-### 2.7. 在container中配置spark运行环境
-`
-cp /home/spark_env/.bashrc ~/.bashrc
-`
 
 ## 三、代码运行说明
 
