@@ -139,7 +139,7 @@ log/
 .idea/
 *.iml
 submission/
-figs/
+#figs/
 trained_models/*
 best_models/
 
