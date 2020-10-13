@@ -63,7 +63,7 @@ def search_weight(valid_y, raw_prob, init_weight=[1.0]*class_num, step=0.001):
     * 不同序列 - 对序列进行不同的截断或者shuffle等
 ## 二、环境准备
 
-* 环境准备 - 在python3环境下, 以`pip3 install --no-cache-dir -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com`
+* 环境准备 - 128G内存，单卡12g显存下，以python3环境运行`pip3 install --no-cache-dir -r requirements.txt -i http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com`
 * 数据集下载 - [data](https://drive.google.com/file/d/15onAobxlim_uRUNWSMQuK6VxDsmGTtp4/view), 下载后`mkdir $PROJECT_PATH/data && mv $PATH_OF_RAW_DATA_FOLDER $PROJECT_PATH/data`
 ## 三、代码运行说明
 
