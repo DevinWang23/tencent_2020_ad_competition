@@ -4,7 +4,7 @@
 * [比赛官网链接](https://algo.qq.com/index.html?lang=en)
 * [参赛手册](./docs/2020腾讯广告算法大赛参赛手册.pdf)
 * [原始输入数据说明](./docs/2020腾讯广告算法大赛数据说明.xlsx)
-* [数据分析报告](./docs/数据分析.docx)
+* [数据分析报告](./docs/数据分析报告.docx)
 
 ## 一、 解决方案
 视为脱敏情况下的文本分类任务, 以每个用户点击序列为文本训练embedding以及传统统计特征为输入, 构建基于age loss 以及gender loss的双weight loss模型并通过从模型结构,词向量等方面构建多个差异化,最后通过线性加权做ensemble,生成最终结果.
