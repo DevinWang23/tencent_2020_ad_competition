@@ -116,7 +116,7 @@ devin && martin 文件夹分别为选手个人代码, devin文件夹下的代码
 合并初复赛数据集并生成label,输出raw_train_df.feather以及raw_test_df.feather.
 
 ### 3.2. 特征工程
-运行`feature_engineering.ipynb && `
+运行`feature_engineering.ipynb && embedding.ipynb`
 生成统计特征以及embedding.
 
 ### 3.3. 模型训练预测
